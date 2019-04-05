@@ -4,7 +4,7 @@
 ## About The Tool
 
 phrasen|drescher (or short pd) is a modular and multi processing pass 
-phrase cracking tool. A simple plugin API allows easy development of new plugins. The main features of p|d are:
+phrase cracking tool. A simple plugin API allows easy development of new plugins. The main features of pd are:
 
 * Modular with the use of plugins
 * Multi processing
@@ -24,7 +24,7 @@ Some plugins require additional libraries. Please read src/plugins/README for mo
 
 ## The Plugins
 
-p|d cracks key passphrases, password hashes, accounts of remote web 
+pd cracks key passphrases, password hashes, accounts of remote web 
 applications or whatever a plugin was designed for. The actually cracking 
 process is provided by plugins. In this release, there are four modules 
 included in the package:
@@ -41,11 +41,11 @@ For further information see src/plugins/README.
 
 ### Getting Started
 
-Once you compiled and installed p|d, you should give it a try and run it.
-The first choice you'll have to make when using p|d is what plugin to use.
-p|d plugins are stored in the system library directory which may differ 
+Once you compiled and installed pd, you should give it a try and run it.
+The first choice you'll have to make when using pd is what plugin to use.
+pd plugins are stored in the system library directory which may differ 
 from whatever system you're running it on. If you're unsure which directory 
-that is, you can run p|d with the -h flag and it will tell you which the
+that is, you can run pd with the -h flag and it will tell you which the
 current plugin directory is:
 
 ```
@@ -61,7 +61,7 @@ $ pd -h
 ```
 
 Every plugin will have additional command line options besides the few 
-default p|d command line options. Once you chose a plugin, you can get 
+default pd command line options. Once you chose a plugin, you can get 
 further plugin specific information and command line flags:
 
 ```
@@ -71,7 +71,7 @@ $ pd rsa-dsa
 
 ### Cracking Modes
 
-p|d offers two cracking modes. The Incremental Mode (which is used by 
+pd offers two cracking modes. The Incremental Mode (which is used by 
 default) does pure brute-forcing of pass phrases while in Dictionary Mode, 
 phrases are taken from a word list:
 
@@ -91,7 +91,7 @@ And to specify a range. E.g. from 8 characters to 12:
 $ pd rsa-dsa -i 8:12 -K private-key
 ```
 
-By default, p|d uses all human readable characters to generate the 
+By default, pd uses all human readable characters to generate the 
 phrases and passwords. However, you can specify your own character map 
 in an environment variable `PD_CHARMAP'. For example, in order
 to only use lower case characters:
@@ -151,7 +151,7 @@ $ pd rsa-dsa -d wordlist -r Ad -K private-key
 ```
 
 Sometimes, dictionary words and their rewritten equivalent are identical. 
-p|d will discard the rewritten word in this case.
+pd will discard the rewritten word in this case.
 
 ### Writing Plugins
 
