@@ -1,3 +1,4 @@
+![Logo](http://leidecker.info/common/images/phrasendrescher.png)
 # phrasen|drescher - A passphrase cracker
 
 ## About The Tool
