@@ -3,9 +3,16 @@
 
 ## About The Tool
 
-phrasen|drescher (or short p|d) is a modular and multi processing pass 
-phrase cracking tool. It comes with a number of plugins and a simple plugin 
-API allows easy development of new plugins. The main features of p|d are:
+phrasen|drescher (or short pd) is a modular and multi processing pass 
+phrase cracking tool. It comes with a number of plugins:
+
+* __rsa-dsa__: RSA-DSA private key pass phrase cracking
+* __mssql__: MS SQL 2000/2005 SHA-1 hashes
+* __ssh__: SSH services on remote host
+* __http-raw__: HTTP form based authentications
+* __enc-file__: Files encrypted using symmetric ciphers 
+
+A simple plugin API allows easy development of new plugins. The main features of p|d are:
 
 * Modular with the use of plugins
 * Multi processing
