@@ -1,0 +1,46 @@
+[2017-11-26] Changes with phrasen|drescher 1.2.2c
+
+ * added fix to autoconfig script to detect OpenSSL 1.1.0
+
+[2009-03-30] Changes with phrasen|drescher 1.2.2
+
+  * added the --with-fixed-plugin-dir configuration flag for using a fixed
+    plugin directory
+  * added the libcrypto to the LDFLAGS for Linux in configure.ac
+  * bug fixed in source.c: auto-chosing a source would only work for the 
+    first process
+  * the 1337 rewriting rule has been modified so that all combination of 1337
+    characters are used
+
+  ssh.c: 
+  * more verbosive error messages
+  * added support for multiple target hosts, usernames from a file and 
+    testing for empty passwords or passwords equal to usernames
+  * version increased to 1.1
+
+  rsa-dsa.c:
+  * renamed to pkey.c
+  
+  http-raw.c: 
+  * the message command line argument was ignored
+  * more verbosive output
+  * fixed a bug in the content-length calculation with double'%'
+  * version increased to 1.1
+
+  enc-file.c:
+  * added version 1.0
+
+[2008-06-23] Changes with phrasen|drescher 1.1.1
+
+  * improvement of the plugin API 
+  * ssh and http-raw plugin added to package
+  * plugin Makefile written and embedded into the main building process;
+    plugins can be compiled with the --with-plugins configuration option
+  * incremental mode (from 1 to 8) is now default if neither -i nor -d used
+
+[2008-04-08] Changes with phrasen|drescher 1.1.0
+
+  * plugin and multi-processing support implemented
+  * rsa-dsa and mssql plugin added to package
+  
+[2007-07-19] Inital release phrasen|drescher 1.0
