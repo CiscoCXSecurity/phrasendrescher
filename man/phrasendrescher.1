@@ -1,0 +1,94 @@
+.TH PHRASEN|DRESCHER 1 "Version 1.1.1"
+
+.SH NAME
+.B phrasen|drescher
+is a modular and multi processing pass phrase cracking framework.
+
+.SH SYNOPSIS
+.B phrasendrescher
+plugin [options] 
+
+.SH DESCRIPTION
+.B phrasen|drescher
+is a modular and multi processing pass phrase cracking framework. It comes with 
+a number of plugins and new plugins can be added with ease.
+
+.SH PLUGINS
+Set the enviornment variable 
+.I PHRASENDRESCHER_PLUGINS 
+to the directory containing your plugins (default is ./plugins). Then, run
+phrasen|drescher without any arguments to see a list of available plugins.
+
+.SH GENERAL OPTIONS
+.PP
+.TP
+.I -h
+print help message
+.TP
+.I -v
+verbose mode
+.TP
+.I -i from[:to]
+incremental mode beginning with word length `from' and going to `to'
+.TP
+.I -d file
+run dictionary based with words from `file'
+.TP
+.I -w number
+number of worker threads (default is one)
+.TP
+.I -r rule
+use rules to rewrite dictionary words
+.PP
+.TP
+.B Rewriting rules:
+.TP
+.I A
+Rewrite word with only upper case characters
+.TP
+.I F
+Rewrite word with first character as upper case
+.TP
+.I L
+Rewrite word with last character as upper case
+.TP
+.I a
+Rewrite word with only lower case characters
+.TP
+.I f
+Rewrite word with first character as lower case
+.TP
+.I l
+Rewrite word with last character as lower case
+.TP
+.I w
+first letter of each word to lower case
+.TP
+.I D
+Prepend each digit (0-9) to the word
+.TP
+.I d
+Append each digit (0-9) to the word
+.TP
+.I e
+enleet the word 
+.TP
+.I x
+apply all rules to a word
+
+.SH ENVIRONMENT VARIABLES
+.PP
+.TP
+.I PD_PLUGINS
+the directory containing plugins
+.TP
+.I PD_CHARMAP
+the characters for the incremental mode are taken from a character list. A customized
+list can be specified in the environment variable.
+
+.SH AUTHOR
+.PP
+.TP
+Nico Leidecker <nico@leidecker.info>
+http://www.leidecker.info
+

@@ -1,0 +1,260 @@
+phrasen|drescher - the passphrase cracker
+--------------------------------------------------------------------------------
+
+  1 About
+  2 Installation
+  3 Using Plugins
+  4 Run It!
+  5 Writing Plugins
+  6 Troubleshooting
+
+
+ 1  About
+ --------
+
+    phrasen|drescher (abbreviated: p|d) is a modular and multi processing pass 
+    phrase cracking tool. It comes with a number of plugins but a simple plugin 
+    API allows an easy development of new plugins. The main features of p|d are:
+    
+    	* Modular with the use of plugins
+    	* Multi processing
+    	* Dictionary attack with or without permutations (uppercase, lowercase, 
+    	  l33t, etc.)
+    	* Incremental brute force attack with custom character maps
+    	* Runs on FreeBSD, NetBSD, OpenBSD, MacOS and Linux
+
+ 2  Installation
+ ---------------
+
+      ./configure --with-plugins
+      make
+      make install
+    
+    Some plugins require extra libraries. Please see src/plugins/README to find 
+    more details.
+   
+ 3  The Plugins
+ --------------
+ 
+    p|d cracks key passphrases, password hashes, accounts of web applications 
+    or whatever a plugin is designed to do. The actually cracking process is 
+    provided by plugins. As for version 1.1.1 of p|d, there are four modules 
+    included in the package:
+    
+    	* rsa-dsa: 	cracks RSA and DSA key passphrases
+    	* mssql: 	cracks MS SQL 200/2005 password hashes
+    	* ssh: 		performs account cracking attacks against an SSH service
+    	            (supports password, keyboard-interactive and publickey)
+    	* http-raw: a module for simple HTTP form based account brute-forcing
+    
+    For further information, see src/plugins/README.
+ 
+ 4  Run It!
+ ----------
+
+	The first choice you'll have to make when using p|d is what plugin to use.
+	Once you compiled and installed p|d, you should give it a try and run it.
+	p|d will search in ./plugins/ for available plugins. However, if the plugins
+	are not stored in the relative path, you want to specify the explicit path
+	in `PD_PLUGINS' first:
+	
+		$ export PD_PLUGINS=/my/plugin/directory
+		$ pd
+		phrasen|drescher 1.1.1 - the passphrase cracker
+		Copyright (C) 2008 Nico Leidecker; nico@leidecker.info
+
+		Usage: pd plugin [options] credentials
+		Please choose a plugin first or use -h for more help
+		Available plugins:
+  		  rsa-dsa  mssql  ssh  http-raw
+
+		Set the plugin directory in the environemtn variable 
+		PD_PLUGINS if required.
+		
+	Once you chose a plugin, you can get further plugin specific information and
+	command line flags:
+	
+		$ pd rsa-dsa
+
+    p|d offers two cracking modes it can run in. The Incremental Mode (which is 
+    used by default) does pure brute-forcing of potential pass phrases while in 
+    Dictionary Mode, phrases are taken from a word list:
+
+      Incremental Mode:
+
+        This mode expects an argument flag -i that specifies the explicit length 
+        or a range of words to generate. Generating 8 characters long words, for
+        instance, can be done this way:
+
+          $ pd rsa-dsa -i 8 -K private-key
+
+        And to specify a range. E.g. from 8 characters to 12:
+        
+          $ pd rsa-dsa -i 8:12 -K private-key
+
+        By default, p|d uses all human readable characters to generate the 
+        phrases and passwords. However, you can specify your own character map 
+        in an environment variable `PD_CHARMAP'. For example, in order
+        to only use lower case characters:
+
+          $ export PD_CHARMAP="abcdefghijklmnopqrstuvwxyz"
+          $ pd rsa-dsa -i 6:8 -K private-key
+
+        The character map also implies the order of the characters to be used
+        in phrases. So, if you want to do the increment in reverse order,
+        simply do:
+
+          $ export PD_CHARMAP="zyxwvutsrqponmlkjihgfedcba"
+          $ pd rsa-dsa -i 6:8 -K private-key
+
+		This is generally a good idea, if you know what form of a password you 
+		can expect, because of the nature of the password to crack or maybe even 
+		because of password policies (E.g. "password has to begin with a 
+		character").
+
+     Dictionary Mode:
+
+       Using this mode is straight forward:
+
+         $ pd rsa-dsa -d wordlist -K private-key
+
+       For Dictionary Mode, there is a rewriting option. Words, taken from a 
+       file, can be rewritten after certain rules. E.g. converted to upper or 
+       lower case, append or prepend a number. All this is done with the `-r' 
+       flag. This is a list of possible rules:
+
+ 			A = all characters upper case
+            F = first character upper case
+            L = last character upper case
+            W = first letter of each word to upper case
+            a = all characters lower case
+            f = first character lower case
+            l = last character lower case
+            w = first letter of each word to lower case
+            D = prepend digit
+            d = append digit
+            e = 1337 characters
+            x = all rules
+
+	   In order to rewrite all characters in a word to upper case and to
+	   append a digit (0 to 9) at the end:
+
+	      $ pd rsa-dsa -d wordlist -r Ad -K private-key
+	     
+	   Sometimes, dictionary words and their rewritten equivalent are identical. 
+	   p|d will discard the rewritten word in this case.
+
+ 5  Writing Plugins
+ ------------------
+ 
+	The plugin API is very simple. What also implies, that the plugin developer 
+	has to do a lot of the work himself. The API generally requires mandatory 
+	functions to be declared. Each of the function will be called from p|d at a 
+	certain time. You can think of there are two sets of functions. Those, that 
+	are called from the main p|d process and those that are called by each p|d 
+	worker process. As for the latter, they are named with the prefix 
+	plugin_worker_. Please be aware, that the worker processes do not share the 
+	same memory. The advantage of that is, that the developer does not have to 
+	care for thread-safe programming. 
+ 
+ 
+    Plugin Macros:
+
+	  There are a couple of macros that are required in each plugin:
+
+	  PLUGIN_NAME(name); 				The name of the plugin. The filename of 
+	  									the plugin has to be used in p|d to 
+	  									chose a plugin. The plugin name 
+	  									specified here is only for pure 
+	  									information and will therefore only be 
+	  									shown in the usage message.
+	  
+	  PLUGIN_AUTHOR(name); 				The author's name.
+	  
+	  PLUGIN_VERSION(version); 			The version of the plugin.
+	  
+	  PLUGIN_OPTIONS(list of options);	The list of options will include all 
+	  PLUGIN_NO_OPTIONS; 				plugin related command line options, 
+	  									their flags, parameters and description. 
+	  									The list expects the flag and its 
+	  									attributes followed by the description 
+	  									and followed by the next flag, and so 
+	  									on ... For example:
+	  
+										PLUGIN_OPTIONS(
+										    "t text", 
+										    "print's `text' on on the screen",
+   											"V", 
+   											"shows the plugin's version number"
+   										);
+
+										If there are no command line options for 
+										this plugin use PLUGIN_NO_OPTIONS;
+
+	  PLUGIN_INFO(information);			There's an information text in each
+	  PLUGIN_NO_INFO; 	 				plugin's usage message. The text can 
+	  									contain whatever is helpful to know for 
+	  									the plugin's usage.
+
+	  A complete example:
+		
+	  PLUGIN_NAME("MyMacro");
+	  PLUGIN_AUTHOR("Me");
+	  PLUGIN_VERSION("1.0");
+	  PLUGIN_OPTIONS("t text", "prints `text' on the screen");
+	  PLUGIN_NO_INFO;
+
+
+	Plugin Functions:	
+ 
+	  PLUGIN_FUNCTION plugin_get_opts(int opt, char *arg);
+	  
+	    The first function to be called during the command line parsing. Each 
+	    command line option, that is not recognized by p|d itself, will be 
+	    forwarded to this function. the `opt' parameter will hold the option 
+	    character and `arg' will obviously be the following command line 
+	    argument.
+	    
+	  PLUGIN_FUNCTION plugin_init(int wnum);
+	  
+	    Once all options have been parsed, the init function is called with the 
+	    number of workers as the argument.
+	    
+	  PLUGIN_FUNCTION plugin_finish();
+	  
+	    The function to be called at the very end, when p|d is terminated.
+
+	  PLUGIN_FUNCTION plugin_worker_init(int wid); 	
+	  
+	    When p|d is forking all the worker processes the first function that 
+	    will be invoked is this one. The argument `wid' is the unique worker id 
+	    (an incrementing number from 0).
+	    
+	  PLUGIN_FUNCTION plugin_worker_try_phrase(int wid, char *phrase); 	
+	  
+	  	The heart of each plugin. This function is called for every worker, 
+	  	every time a new phrase has to be tested. `wid' if the worker's id and 
+	  	phrase the unique pass phrase. The function can return with three 
+	  	states:
+
+    	* PLUGIN_FAILURE: if a failure occurs (p|d will quit then)
+    	* PLUGIN_COMPLETED: if all work for this worker is done
+    	* PLUGIN_SUCCESS: normal return state (if no failure occurs)
+
+	  PLUGIN_FUNCTION plugin_worker_finish(int wid); 	
+	  
+	    Similar to plugin_finish() but executed, when the worker process 
+	    finishes. 
+  
+   An example plugin can be found in src/plugins/skel.c.
+
+ 6  Troubleshooting
+ ------------------
+
+   If you encounter any bugs, not listed in this section, please refer to
+   nico@leidecker.info.
+
+--------------------------------------------------------------------------------
+phrasen|drescher 1.1.1 - the passphrase cracker
+Copyright (C) 2008 Nico Leidecker; nico@leidecker.info
+http://www.leidecker.info

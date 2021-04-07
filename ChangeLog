@@ -1,0 +1,14 @@
+[2008-06-23] Changes with phrasen|drescher 1.1.1
+
+  * improvement of the plugin API 
+  * ssh and http-raw plugin added to package
+  * plugin Makefile written and embedded into the main building process;
+    plugins can be compiled with the --with-plugins configuration option
+  * incremental mode (from 1 to 8) is now default if neither -i nor -d used
+
+[2008-04-08] Changes with phrasen|drescher 1.1.0
+
+  * plugin and multi-processing support implemented
+  * rsa-dsa and mssql plugin added to package
+  
+[2007-07-19] Inital release phrasen|drescher 1.0

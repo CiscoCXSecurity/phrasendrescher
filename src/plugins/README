@@ -1,0 +1,94 @@
+rsa-dsa.c [1.0]                          by Nico Leidecker <nico@leidecker.info>
+--------------------------------------------------------------------------------
+Cracks RSA and DRA key passphrases. The keys must be in PEM format.
+
+Requirements:
+
+  libssl
+
+Usage:
+
+  $ pd rsa-dsa -K key.pem
+ 
+
+
+mssql.c [1.0]                         by Mark Lowe <mrl@portcullis-security.com>
+--------------------------------------------------------------------------------
+For cracking MS SQL 2000 and 2005 salted SHA1 password hashes.
+
+Requirements:
+
+  libssl
+
+Usage:
+
+  $ pd mssql -H 0x01006d75a401ba0a8bfc2beab5b86efc930300d1a2561a783aac
+
+
+
+ssh.c [1.0]                              by Nico Leidecker <nico@leidecker.info>
+--------------------------------------------------------------------------------
+This plugin does attack SSH accounts on a remote host. The plugin supports 
+password, keyboard-interactive and key based authentication. It choses between
+password and keyboard-interactive if an authentication mechanism is not enforced
+with -p (password), -n (keyboard-interactive) or -k (public key).
+
+Requirements:
+
+  libssl, libssh2
+
+Usage:
+
+  $ pd ssh -H 10.0.0.1
+
+  Key based authentication requires the private and public keys to be stored in 
+  a folder. The public keys must have the same name as the private keys but with
+  the extension `.pub'. Have all key file names in a file and run p|d in 
+  dictionary mode. It will then pick the key names and use them for the 
+  authentication attempts. As an example (with the keys from the metasploit 
+  project  site):
+
+  $ wget -q -O- http://sugar.metasploit.com/debian_ssh_dsa_1024_x86.tar.bz2 | \
+  tar xvjf - -C /tmp | grep -v pub | sed s/^/\\\/tmp\\\// > key_list
+  $ pd ssh -k -d key_list -H 10.0.0.1
+
+  The default user account is `root' and the default port is `22'. You can 
+  change these with -U and -P, respectively:
+  
+  $ pd ssh -U myuser -P 12345 -H 10.0.0.1
+
+
+
+http-raw [1.0]                           by Nico Leidecker <nico@leidecker.info>
+--------------------------------------------------------------------------------
+The http-raw plugin is able to do simple HTTP form login brute forcing either 
+via the GET or POST method. All you need is a file containing the request to the
+server and you also need to use the {PASSWORD} placeholder in order to signalize
+p|d where to put the password. The target host is either taken from the HOST 
+field in the request header or can be explicitely specified with the -T flag.
+Another command line option you might want to specify is the message in the web
+page that is returned on an invalid login attempt. p|d will use this message to
+indicate, whether an attempt succeded or not.
+
+Usage:
+
+  $ cat request 
+  GET /user=admin&password={PASSWORD} HTTP/1.1
+  Host: 10.0.0.1
+  
+  $ pd http-raw -R request -m "Login failed"
+  
+  
+  As for now, the plugin does not support SSL out of the box. However, there's a 
+  workaround using stunnel:
+  
+  $ stunnel3 -c -d 127.0.0.1:8888 -r 10.0.0.1:443
+  $ pd http-raw -P 8888 -H 127.0.0.1 -R request -m "Login failed"
+
+
+
+skel.c
+--------------------------------------------------------------------------------
+This file is a simple template file which might help you with the development of
+plugins. The source code is commented.
+
